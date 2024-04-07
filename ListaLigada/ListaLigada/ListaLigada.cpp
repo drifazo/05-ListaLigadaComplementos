@@ -1,3 +1,4 @@
+
 #include <iostream>
 using namespace std;
 
@@ -8,6 +9,7 @@ struct NO {
 };
 
 NO* primeiro = NULL;
+NO* ultimo = NULL;
 
 // headers
 void menu();
@@ -69,7 +71,7 @@ void menu()
 
 void inicializar()
 {
-	// se a lista j· possuir elementos
+	// se a lista j√° possuir elementos
 // libera a memoria ocupada
 	NO* aux = primeiro;
 	while (aux != NULL) {
@@ -115,8 +117,11 @@ void inserirElemento()
 {
 	// aloca memoria dinamicamente para o novo elemento
 	NO* novo = (NO*)malloc(sizeof(NO));
+
+
 	if (novo == NULL)
 	{
+		cout << "Houve um erro na alocacao de memoria do elemento";
 		return;
 	}
 
@@ -124,29 +129,93 @@ void inserirElemento()
 	cin >> novo->valor;
 	novo->prox = NULL;
 
-	if (primeiro == NULL)
-	{
-		primeiro = novo;
-	}
-	else
-	{
-		// procura o final da lista
-		NO* aux = primeiro;
-		while (aux->prox != NULL) {
-			aux = aux->prox;
+	NO* posicao = posicaoElemento(novo->valor);
+
+	if (posicao == NULL) {
+		if (primeiro == NULL)
+		{
+			primeiro = novo;
+			ultimo = novo;
 		}
-		aux->prox = novo;
+		else
+		{
+			ultimo->prox = novo;
+			ultimo = novo;
+		}
+		cout << "Elemento " << novo->valor << " adicionada a lista" << endl;
 	}
+	else {
+		cout << "Esse elemento ja esta na lista." << endl;
+	}
+
+	
 }
 
 void excluirElemento()
 {
+	if (primeiro == NULL) {
+		cout << "A lista esta vazia" << endl;
+	}
+	else {
+		int excluir;
+		cout << "Digite o elemento a ser buscado: ";
+		cin >> excluir;
+
+		NO* delElemento = posicaoElemento(excluir);
+
+		if (delElemento == NULL) {
+			cout << "O elemento nao esta na lista";
+		}
+		else {
+			if (delElemento == primeiro) {
+				primeiro = delElemento->prox;
+
+			}
+			else {
+				NO* aux = primeiro;
+				while (aux->prox != delElemento) {
+					aux = aux->prox;
+				}
+				aux->prox = delElemento->prox;
+			}
+			cout << "O elemento foi excluido" << endl;
+		}
+		free(delElemento);
+
+		
+	}
 
 }
 
 void buscarElemento()
 {
+	if (primeiro == NULL) {
+		cout << "A lista esta vazia" << endl;
+	}
+	else {
+		int buscar;
+		cout << "Digite o elemento a ser buscado: ";
+		cin >> buscar;
+		NO* localizar = posicaoElemento(buscar);
 
+		if (localizar == NULL) {
+			cout << "O elemento nao esta na lista" << endl;
+		}
+		else {
+			cout << "O elemento " << localizar->valor << " esta na lista na posicao " << localizar << endl;
+		}
+	}
 }
 
-
+NO* posicaoElemento(int numero)
+{
+	NO* aux = primeiro;
+	while (aux != NULL) {
+		if (aux->valor == numero)
+		{
+			break;
+		}
+		aux = aux->prox;
+	}
+	return aux;
+}
